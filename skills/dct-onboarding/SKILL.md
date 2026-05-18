@@ -1,6 +1,6 @@
 ---
 name: dct-onboarding
-description: 데이터 컨설팅 팀(DCT) Claude Code 신규 셋업 가이드. Atlassian MCP, SSH 키, gh CLI, 팀 CLAUDE.md/rules 배포를 단계별로 안내한다. Slack/AWS는 선택 단계.
+description: 데이터 컨설팅 팀(DCT) Claude Code 신규 셋업 가이드. Atlassian MCP, SSH 키, gh CLI, 팀 CLAUDE.md/rules 배포를 단계별로 안내한다. AWS/GCP CLI, Slack, RTK 는 선택 단계.
 ---
 
 # DCT 온보딩 스킬
@@ -27,6 +27,7 @@ description: 데이터 컨설팅 팀(DCT) Claude Code 신규 셋업 가이드. A
 | CLAUDE.md | `ls ~/.claude/CLAUDE.md` | 파일 존재 |
 | rules/ | `ls ~/.claude/rules/*.md \| wc -l` | 8개 이상 |
 | AWS CLI | `aws sts get-caller-identity` | exit code 0 |
+| GCP CLI | `gcloud auth list --filter=status:ACTIVE --format="value(account)"` | 계정 1개 이상 출력 |
 | Slack MCP | `jq '.mcpServers.slack // empty' ~/.claude.json` | 비어있지 않음 |
 | RTK | `which rtk && rtk --version` | 명령 존재 + 버전 출력 |
 | RTK hook | `jq '.hooks.PreToolUse // empty' ~/.claude/settings.json \| grep rtk` | rtk 포함 |
@@ -63,7 +64,33 @@ description: 데이터 컨설팅 팀(DCT) Claude Code 신규 셋업 가이드. A
 - [ ] `~/.claude/rules/` 없음 → `rules/*.md` 8개 복사
 - [ ] `~/.claude/rules/` 있음 → 파일 단위 검사, **없는 파일만** 추가 복사 (기존 덮어쓰기 금지)
 
-### D. RTK 설치 — 토큰 절감 (권장)
+### D. AWS CLI (선택, Slack MCP 전제 조건)
+AWS 리소스 접근이 필요하거나 **F 단계 Slack MCP 를 쓸 계획이면 필수** (봇 토큰을 AWS Secrets Manager 에서 가져옴). MCP 는 설치하지 않고 CLI 만 설정 (Claude 가 Bash 로 `aws` 직접 호출).
+- [ ] AWS CLI 설치 확인 (`aws --version`, 없으면 `brew install awscli`)
+- [ ] Access Key + Secret 발급 (IAM Console)
+- [ ] `aws configure` — 기본 프로필, 기본 리전 `ap-northeast-2` (서울)
+- [ ] `aws sts get-caller-identity` 로 인증 검증
+- [ ] 한 번 설정하면 모든 AWS SDK/CLI/Claude Bash 호출에서 공유됨
+
+### E. GCP CLI (선택, Cloud Storage 중심)
+데컨팀 GCP 리소스(특히 **Cloud Storage**) 접근이 필요한 경우만. AWS 와 동일 패턴 — MCP 없이 `gcloud` CLI 만 설정 (Claude 가 Bash 로 `gcloud storage` 직접 호출). 전제 조건 없음 (독립).
+- [ ] `gcloud` CLI 설치 확인 (`gcloud --version`)
+  - 없으면 `brew install --cask google-cloud-sdk` 또는 https://cloud.google.com/sdk/docs/install
+- [ ] 개인 계정 인증: `gcloud auth login` → 브라우저에서 **`@madup.com` 구글 계정** 로그인
+- [ ] Application Default Credentials: `gcloud auth application-default login` (Python `google-cloud-storage` 등 SDK 경유 시 필수, `gcloud auth login` 과 별개 credential)
+- [ ] 기본 프로젝트 지정: `gcloud projects list` → `gcloud config set project <PROJECT_ID>` (프로젝트 자주 전환 시 named configuration 활용)
+- [ ] 검증: `gcloud auth list` + `gcloud config get-value project` + `gcloud storage buckets list --limit=5`
+- 참고: 구형 `gsutil` 대신 **`gcloud storage`** 사용 (2~5배 빠름). 서비스 계정 JSON 키 지양 — 개인 계정 인증으로 대체, 키 파일 커밋 금지
+- 비용: 재귀 `ls -r` / cross-region 전송은 과금 — 테스트는 항상 `--limit` 사용
+
+### F. Slack MCP (선택)
+개인 DM, 채널 조회, 메시지 전송이 필요한 경우만. 공식 `@modelcontextprotocol/server-slack` + **AWS Secrets Manager `prod/gen-ai/slack` 봇 토큰** 사용 (D 단계 AWS CLI 선행 필수).
+- [ ] `refresh-slack-token.sh` 실행 — `aws secretsmanager get-secret-value` 로 토큰 fetch 후 `jq` 로 `~/.claude.json` 의 `mcpServers.slack` 키만 병합
+- [ ] 캐시 워밍: `npx -y slack-mcp-server` 1회 실행 (첫 연결 타임아웃 방지, "Loaded users from cache" 출력 시 Ctrl+C)
+- [ ] 봇 `@매도비` 권한 확인 (`chat:write`, `im:write`) — private 채널은 `/invite @매도비` 선행
+- [ ] **주의**: 토큰 로테이션 시 `/dct-refresh-slack` 로 갱신
+
+### G. RTK 설치 — 토큰 절감 (권장)
 RTK(Rust Token Killer)는 Bash 명령 출력을 자동 압축해 **토큰 소비를 60~90% 줄여주는** CLI 프록시. Claude Code `PreToolUse` hook 으로 `git status` → `rtk git status` 처럼 투명하게 rewrite 한다.
 
 - [ ] RTK 설치:
@@ -82,26 +109,11 @@ RTK(Rust Token Killer)는 Bash 명령 출력을 자동 압축해 **토큰 소비
 - 참고: RTK 는 Claude Code 내장 도구(`Read`, `Grep`, `Glob`)에는 영향 없음 — `Bash` 도구 셸 명령에만 적용
 - 리포: https://github.com/rtk-ai/rtk
 
-### E. Slack MCP (선택)
-개인 DM, 채널 조회, 메시지 전송이 필요한 경우만.
-- [ ] `@modelcontextprotocol/server-slack` 사용 (AWS Secrets Manager 봇 토큰 기반)
-- [ ] `madupteam.slack.com` 브라우저 로그인 후 개발자 도구에서 `xoxc-...`, `xoxd-...` 추출
-- [ ] `settings-example.json` 의 slack 섹션에 토큰 입력
-- [ ] `SLACK_MCP_ADD_MESSAGE_TOOL` 에 전송 허용 채널 ID 화이트리스트 (예: `C01234ABCD,C05678EFGH`) — 기본값 `false` 로 전송 비활성화 권장
-- [ ] `jq` 로 `~/.claude.json` 에 병합
-- [ ] **주의**: 본인 Slack 세션 기반이라 로그아웃/장기 미접속 시 재발급 필요
-
-### E. AWS CLI (선택)
-AWS 리소스 접근이 필요한 경우만. MCP 는 설치하지 않고 CLI 만 설정 (Claude 가 Bash 로 `aws` 직접 호출).
-- [ ] AWS CLI 설치 확인 (`aws --version`, 없으면 `brew install awscli`)
-- [ ] Access Key + Secret 발급 (IAM Console)
-- [ ] `aws configure` — 기본 프로필, 기본 리전 `ap-northeast-2` (서울)
-- [ ] `aws sts get-caller-identity` 로 인증 검증
-- [ ] 한 번 설정하면 모든 AWS SDK/CLI/Claude Bash 호출에서 공유됨
-
-### F. 최종 검증
+### H. 최종 검증
 - [ ] `jq '.mcpServers | keys' ~/.claude.json` 로 MCP 목록 확인 (값은 출력 금지, 반드시 `~/.claude.json` 대상)
 - [ ] `gh auth status` 로 GitHub 인증 확인
+- [ ] (AWS 설정 시) `aws sts get-caller-identity` 로 인증 확인
+- [ ] (GCP 설정 시) `gcloud auth list` + `gcloud config get-value project` + `gcloud storage buckets list --limit=5` 로 확인
 - [ ] `~/.claude/CLAUDE.md` 와 `~/.claude/rules/` 존재 확인
 - [ ] `/dct-plan DCTC-TEST` 같은 명령으로 스모크 테스트 (실제 카드가 없어도 MCP 호출 흐름 확인 가능)
 
@@ -120,6 +132,7 @@ AWS 리소스 접근이 필요한 경우만. MCP 는 설치하지 않고 CLI 만
 - **SSH 인증 실패** → `~/.ssh/config` 권한(600), `ssh -T git@github.com` 테스트
 - **Slack MCP 연결 실패** → 토큰 만료 가능성, 브라우저에서 로그인 상태 확인 후 토큰 재추출
 - **AWS CLI 실패** → `~/.aws/credentials`, `~/.aws/config` 직접 확인 (`cat` 하지 말고 `aws configure list` 사용해서 값 노출 최소화)
+- **GCP CLI 실패** → `gcloud auth list` 로 active 계정 확인, 비었으면 `gcloud auth login` 재실행. SDK 경유 접근 실패면 `gcloud auth application-default login` 누락 여부 확인. `~/.config/gcloud/` 는 `Read`/`cat` 금지 (credentials 유출 방지)
 
 ## 복구 원라이너
 

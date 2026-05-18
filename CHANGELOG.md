@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.9.0 (2026-05-18)
+
+### Added
+- **`/dct-gcs` 커맨드 + `dct-gcs` 스킬** — DCT 멀티프로젝트 GCP Cloud Storage 운영 전용. 반복 함정(프로젝트 혼선, cross-region egress 과금, 재귀 `ls` 폭주, ADC 누락)을 가드레일로 차단. `dct-slack` 와 동일한 2-파일(커맨드+스킬) 구조. MCP 없이 `gcloud` CLI 만 사용
+  - 서브커맨드: `check`(검증) / `use`(named config·프로젝트 전환) / `ls`(자동 `--limit`) / `cp`(cross-region 경고) / `sync`(dry-run 선행)
+  - 인증 분기: CLI=`gcloud auth login`, SDK=ADC. `DefaultCredentialsError` → ADC 누락 진단
+  - 보안: credentials/access token 비노출 (`print-access-token` → `/dev/null`, exit code 만), 서비스 계정 JSON 키 지양
+  - 설치·인증 셋업은 스킬에 중복하지 않고 온보딩 E단계로 위임
+
+### Changed
+- **`dct-onboarding` 스킬에 GCP CLI 추가** — `commands/dct.md`(이미 7단계 GCP 포함)와 동기화. 진단 테이블에 GCP 행, 체크리스트에 `E. GCP CLI` 신설(설치·`auth login`·ADC·프로젝트 지정·`gcloud storage` 검증). 중복되던 `### E.` 레터링 버그 수정 → AWS·Slack·RTK 재정렬해 A~H 일관화. 최종 검증·실패 대응에 GCP 항목 추가
+
+### Files
+- `commands/dct-gcs.md` — 신규
+- `skills/dct-gcs/SKILL.md` — 신규
+- `skills/dct-onboarding/SKILL.md` — GCP 단계 추가 + 레터링 수정
+- `README.md` — 커맨드 표·파일 트리·skills 라인 동기화
+- `.claude-plugin/plugin.json` — 버전 0.8.0 → 0.9.0
+
 ## 0.8.0 (2026-05-15)
 
 ### Changed

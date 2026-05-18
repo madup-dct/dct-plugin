@@ -22,6 +22,7 @@
 | `/dct-slack <ID\|이름> <메시지>` | **본인 계정**으로 Slack 메시지 전송 (korotovsky, xoxc/xoxd) |
 | `/dct-slack-bot <ID\|이름> <메시지>` | 봇 `@매도비` 로 Slack 메시지 전송 (server-slack, xoxb) |
 | `/dct-refresh-slack` | AWS Secrets Manager 에서 Slack 봇 토큰 갱신 |
+| `/dct-gcs <ls\|cp\|sync\|use\|check> [인자]` | DCT Cloud Storage 운영 — 멀티프로젝트 전환·비용 가드레일 (`gcloud` CLI) |
 | `/dct-rtk` | RTK(Rust Token Killer) 설치 + Claude Code hook 연동 — 토큰 60~90% 절감 |
 | `/dct-sc-analyze <경로>` | 코드 품질/보안/성능/아키텍처 종합 분석 (P0~P3 리포트) |
 | `/dct-sc-implement "<설명>"` | TDD 기반 기능 구현 (Red-Green-Refactor) |
@@ -117,8 +118,9 @@ claude-team-config/
 │   ├── dct-complete.md      # /dct-complete — 마무리 + PR
 │   ├── dct-job.md           # /dct-job — 완전 자동화 래퍼
 │   ├── dct-slack.md         # /dct-slack — Slack 메시지 전송
-│   └── dct-refresh-slack.md # /dct-refresh-slack — 토큰 갱신
-├── skills/                  # dct-onboarding, dct-jira-workflow, dct-slack + 품질 스킬
+│   ├── dct-refresh-slack.md # /dct-refresh-slack — 토큰 갱신
+│   └── dct-gcs.md           # /dct-gcs — Cloud Storage 운영
+├── skills/                  # dct-onboarding, dct-jira-workflow, dct-slack, dct-gcs + 품질 스킬
 ├── scripts/                 # refresh-slack-token.sh
 ├── rules/                   # 팀 기본 규칙 8개
 ├── core/

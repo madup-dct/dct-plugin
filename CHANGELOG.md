@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.10.0 (2026-06-23)
+
+### Added
+- **`rules/jira-writing.md` 신규** — Jira 댓글/플랜을 "왜·결론·근거·검색성" 중심으로 쓰는 공용 라이팅 규칙. 원칙 5(결론 먼저 / 왜>무엇 / 검색되게 / 스캔 가능 / 세션로그≠문서) + 안티패턴 표 + before/after 예시. `/dct-complete`·`dct-jira-workflow` 가 단일 소스로 참조
+- **문서 종류 구분(형식 A/B)** — 완료 댓글·진행 업데이트(Slack 미러 → 표·헤더 금지, 마커 5종)와 조사·분석·설계 보고(Jira 직독 → 표·헤더·우선순위 라벨 권장)를 분기. 원칙 5는 공통. 형식 B 모범 사례로 DCTC-2553 전수조사 댓글 참조
+- `core/CLAUDE.md` 상황별 인덱스에 `jira-writing.md` 등록 (on-demand 로딩)
+
+### Changed
+- **완료 댓글 포맷 슬림화** — `dct-complete`·`dct-jira-workflow` 의 포맷 상세를 `rules/jira-writing.md` 로 위임. `📂 영향 범위` 마커 제거(PR `git diff --stat` 와 중복), 변경 bullet을 `<무엇> — <왜/효과>` 형식으로 강제, `💡 결정` 선택 라인 추가. 신규/재작업(append) 블록 양쪽 적용
+- 마커 세트 정리: `✅` / `🔗` / `📝` / `💡`(선택) / `후속`(선택), 재작업 구분 `🔁`. `🔁 추가 작업` 헤더 KST 표기 통일
+
+### Files
+- `rules/jira-writing.md` — 신규
+- `core/CLAUDE.md` — 인덱스 등록
+- `commands/dct-complete.md` — 포맷 슬림화 + `📂` 제거
+- `skills/dct-jira-workflow/SKILL.md` — 포맷 슬림화 + `📂` 제거
+- `.claude-plugin/plugin.json` — 버전 0.9.0 → 0.10.0, author.url → madup-dct
+- `.claude-plugin/marketplace.json` — 버전 0.5.0 → 0.10.0(plugin.json 과 일치), owner.url → madup-dct
+
 ## 0.9.0 (2026-05-18)
 
 ### Added

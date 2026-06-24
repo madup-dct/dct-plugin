@@ -86,12 +86,12 @@ Claude Code 내에서:
 ```
 /dct-job DCTC-1808 feat "프론트 사이드바 애니메이션 개선"
 ```
-내부 파이프라인: `planmode` → `ultrawork` → `/review` → 검증 → PR
+내부 파이프라인: `planmode` → `병렬 Task 구현` → `/review` → 검증 → PR
 
 ### Jira 카드 작업 — 수동 4단계 (권장, 도구 교체 자유)
 ```
 /dct-plan DCTC-1808 "설명"      # 1. 플랜 + Jira 업로드 + 브랜치 진입
-/ultrawork  또는  /autopilot    # 2. 구현 (병렬 / 자율 — 상황에 맞게)
+병렬 Task 구현                  # 2. 구현 (general-purpose 에이전트 복수 호출)
 /review                         # 3. Claude Code 내장 리뷰
 /dct-complete DCTC-1808         # 4. PR 생성 → PR URL 포함한 Jira 완료 댓글
 ```

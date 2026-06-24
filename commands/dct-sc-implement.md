@@ -71,4 +71,4 @@ TDD(Red-Green-Refactor) 사이클 기반으로 기능을 구현한다. `--no-tdd
 - 기존 프로젝트 패턴을 존중 (새로운 추상화 최소화)
 - 불필요한 docstring/주석 추가 금지 (변경하지 않은 코드)
 - 보안: 하드코딩된 시크릿/eval()/exec() 금지
-- 멀티파일 변경은 `executor` 에이전트 위임 고려
+- 멀티파일 변경은 `general-purpose` 서브에이전트 위임 고려

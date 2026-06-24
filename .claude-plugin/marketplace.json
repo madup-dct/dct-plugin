@@ -10,7 +10,7 @@
       "name": "dct-claude-plugin",
       "source": "./",
       "description": "데이터 컨설팅 팀(DCT) Claude Code 온보딩 및 Jira 워크플로우 자동화 플러그인 (gh CLI + SSH 기반)",
-      "version": "0.10.0",
+      "version": "0.11.0",
       "category": "workflow",
       "keywords": ["dct", "jira", "atlassian", "onboarding", "korean", "team-workflow"]
     }

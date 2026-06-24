@@ -55,7 +55,7 @@ claude --plugin ~/dct-plugin
 /dct-plan DCTC-1808 "프론트 사이드바 애니메이션 개선"
 # → 플랜 작성, Jira 업로드, feature/DCTC-1808 브랜치 진입
 
-# (자유) 직접 코딩, /autopilot, /ultrawork 등 무엇이든
+# (자유) 직접 코딩, 네이티브 병렬 Task 등 무엇이든
 
 /dct-complete DCTC-1808
 # → 결과 요약 → PR 생성(확인 후) → PR URL 포함한 Jira 완료 댓글

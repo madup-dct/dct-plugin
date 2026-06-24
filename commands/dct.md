@@ -295,7 +295,7 @@ RTK(Rust Token Killer)는 Bash 명령 출력을 자동 압축해 **토큰 소비
 > **참고**: RTK 는 Claude Code 내장 도구(`Read`, `Grep`, `Glob`)에는 영향 없음 — `Bash` 도구 셸 명령에만 적용. 제거: `rtk init -g --uninstall && brew uninstall rtk`. 리포: https://github.com/rtk-ai/rtk
 
 ### 10. Playwright MCP (선택, 로컬 QA 자동화)
-프론트 QA/E2E 시나리오를 Claude 가 브라우저를 직접 조작하며 수행할 때 사용. `qa-tester` 에이전트와 tmux 를 조합하면 장기 세션(백엔드/프론트 로그 동시 관찰 + Playwright 실행)을 유지할 수 있다.
+프론트 QA/E2E 시나리오를 Claude 가 브라우저를 직접 조작하며 수행할 때 사용. `webapp-testing` 스킬과 tmux 를 조합하면 장기 세션(백엔드/프론트 로그 동시 관찰 + Playwright 실행)을 유지할 수 있다.
 
 **전제 조건**: 없음 (독립)
 
@@ -320,8 +320,8 @@ RTK(Rust Token Killer)는 Bash 명령 출력을 자동 압축해 **토큰 소비
 
 4. **사용 패턴** — 로컬 QA 흐름
    - 별도 터미널에서 대상 서비스 기동 (예: `make dev`) — **tmux 권장**
-   - Claude Code 에서 `/oh-my-claudecode:qa-tester` 에이전트에 시나리오 위임
-   - 에이전트가 Playwright MCP 로 브라우저 조작 + 스크린샷/콘솔 로그 수집
+   - Claude Code 에서 `webapp-testing` 스킬로 QA 시나리오 실행
+   - 스킬이 Playwright MCP 로 브라우저 조작 + 스크린샷/콘솔 로그 수집
    - 발견된 버그는 Jira DCTC 카드 생성 (또는 기존 카드 댓글) 로 연결
 
 > **주의 사항**

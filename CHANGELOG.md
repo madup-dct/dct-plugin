@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.11.0 (2026-06-24)
+
+### Changed
+- **omc(oh-my-claudecode) 의존 제거 → Claude Code 네이티브 전환** — Claude Code 자체 기능 강화로 omc 의존성이 낮아진 추세 반영. 플러그인이 omc 미설치 환경에서도 동작하도록 정리
+  - `executor` 에이전트 → `general-purpose` 서브에이전트 (`dct-job` Phase B, `dct-sc-implement`, `dct-jira-workflow`)
+  - `/ultrawork`·`/autopilot` 커맨드 → **네이티브 병렬 Task** (`Task(subagent_type="general-purpose")` 복수 호출). 권장 파이프라인 표기를 `dct-job`·`dct-plan`·`README`·`TEAM-GUIDE` 전반에서 통일
+  - `qa-tester` 에이전트 → `webapp-testing` 스킬 (플러그인 자체 보유, Playwright MCP 기반)
+  - `rules/agents.md` 의 omc 에이전트 역할표(8종) → 네이티브 위임 방식(Explore/Plan/general-purpose + 모델 티어)으로 재정의
+- **유지**: "OMC 등 기존 환경을 덮어쓰지 마라"는 공존 보호 문구(`dct.md`, `dct-onboarding`)는 의존이 아닌 배려라 그대로 둠
+
+### Files
+- `rules/agents.md` — 역할표 → 네이티브 위임 방식
+- `commands/dct-job.md` — Phase B 병렬 Task, 파이프라인 표기
+- `commands/dct-plan.md` — 파이프라인 박스
+- `commands/dct-sc-implement.md` — executor → general-purpose
+- `commands/dct.md` — qa-tester → webapp-testing 스킬
+- `skills/dct-jira-workflow/SKILL.md` — executor → general-purpose
+- `README.md`, `TEAM-GUIDE.md` — 파이프라인 표기
+- `.claude-plugin/plugin.json`·`marketplace.json` — 버전 0.10.0 → 0.11.0
+
 ## 0.10.0 (2026-06-23)
 
 ### Added
